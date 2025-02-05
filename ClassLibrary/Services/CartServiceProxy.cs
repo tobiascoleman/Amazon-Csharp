@@ -76,23 +76,38 @@ namespace Library.eCommerce.Services
                 return;
             }
 
-            Console.WriteLine("\n========== Receipt ==========");
-            decimal subtotal = 0;
+            Console.WriteLine("------------- Receipt ------------- ");
             foreach (var item in CartItems) {
                 if (item == null) continue;
-                Console.WriteLine($"{item.Name} x {item.Quantity} @ ${item.Price:F2} each: ${item.Total:F2}");
-                subtotal += item.Total;
+                Console.WriteLine($"{item.Name} x {item.Quantity} total: ${item.Total:F2}");
             }
 
-            decimal taxRate = 0.07m;
-            decimal tax = subtotal * taxRate;
-            decimal total = subtotal + tax;
-
-            Console.WriteLine($"Subtotal: ${subtotal:F2}");
-            Console.WriteLine($"Sales Tax (7%): ${tax:F2}");
-            Console.WriteLine($"Total: ${total:F2}");
+            Console.WriteLine($"Subtotal: ${Subtotal:F2}");
+            Console.WriteLine($"Total (with 7% tax): ${Total:F2}");
             return;
         }
+
+		public decimal Subtotal {
+			get {
+				decimal subtotal = 0;
+				foreach (var item in CartItems) {
+					if (item == null) continue;
+					subtotal += item.Total;
+				}
+				return subtotal;
+            }
+			private set {}
+		}
+
+		public decimal Total {
+			get {
+				decimal taxRate = 0.07m;
+				decimal tax = Subtotal * taxRate;
+				return Subtotal + tax;
+			}
+			private set {}
+		}
+
 		public List<ShoppingCart?> CartItems { get; private set; }
 	}
 }

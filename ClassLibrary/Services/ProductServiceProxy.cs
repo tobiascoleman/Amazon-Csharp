@@ -48,9 +48,5 @@ namespace Library.eCommerce.Services
 
             return product;
         }
-
-        internal object FirstOrDefault(Func<object, bool> value) {
-            throw new NotImplementedException();
-        }
     }
 }
