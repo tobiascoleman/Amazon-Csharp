@@ -32,12 +32,12 @@ namespace Library.eCommerce.Services
         }
 
 		public ShoppingCart? AddOrUpdate(ShoppingCart ShoppingCart) {
-			var product = ProductServiceProxy.Current.Inventory.FirstOrDefault(p => p.Id == ShoppingCart.ProductId);
+			var product = ProductServiceProxy.Current.Inventory.FirstOrDefault(p => p?.Id == ShoppingCart.ProductId);
 			if (product == null) {
 				Console.WriteLine("Product not found.");
 				return null;
 			}
-			var existingShoppingCart = CartItems.FirstOrDefault(ci => ci.Id == ShoppingCart.Id);
+			var existingShoppingCart = CartItems.FirstOrDefault(ci => ci?.Id == ShoppingCart.Id);
 			if (existingShoppingCart != null) {
 				product.Quantity += existingShoppingCart.Quantity;
 			}
@@ -50,7 +50,7 @@ namespace Library.eCommerce.Services
 				ShoppingCart.Id = LastKey + 1;
 				CartItems.Add(ShoppingCart);
 			} else {
-				var existing = CartItems.FirstOrDefault(ci => ci.Id == ShoppingCart.Id);
+				var existing = CartItems.FirstOrDefault(ci => ci?.Id == ShoppingCart.Id);
 				if (existing != null) {
 					existing.Quantity = ShoppingCart.Quantity;
 				}
@@ -58,10 +58,10 @@ namespace Library.eCommerce.Services
 			return ShoppingCart;
 		}
 		public ShoppingCart? Delete(int id) {
-			var item = CartItems.FirstOrDefault(ci => ci.Id == id);
+			var item = CartItems.FirstOrDefault(ci => ci?.Id == id);
 			if (item != null) {
 				var product = ProductServiceProxy.Current.Inventory
-					.FirstOrDefault(p => p.Id == item.ProductId);
+					.FirstOrDefault(p => p?.Id == item.ProductId);
 				if (product != null) {
 					product.Quantity += item.Quantity;
 				}
