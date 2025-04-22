@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Maui.eCommerce.Views.InventoryManagementView"
+             Title="InventoryManagementView"
+             NavigatedTo="ContentPage_NavigatedTo"
+             >
+    <VerticalStackLayout>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Entry Text="{Binding Query}" Grid.Column="0"/>
+            <Button Text="Search" Grid.Column="1" Clicked="SearchClicked"/>
+        </Grid>
+        <Picker Title="Sort By" SelectedIndexChanged="SortByChanged">
+            <Picker.Items>
+                <x:String>Name</x:String>
+                <x:String>Price</x:String>
+            </Picker.Items>
+        </Picker>
+        <ListView
+            ItemsSource="{Binding Path=Products}"
+            SelectedItem="{Binding SelectedProduct}"
+            >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="6*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Text="{Binding Display}"/>
+                            <Entry Grid.Column="1" Placeholder="Qty" Keyboard="Numeric" Text="{Binding AddQuantity}"/>
+                            <Button Grid.Column="2" Text="+" Command="{Binding AddToCartCommand}" CommandParameter="{Binding}"/>
+                            <Button Grid.Column="3" Text="Delete" Command="{Binding DeleteCommand}" CommandParameter="{Binding}"/>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Button Text="Add" Clicked="AddClicked"/>
+        <Button
+      Text="Edit"
+         Clicked="EditClicked"
+      />
+        <Button
+      Text="Delete"
+      Clicked="DeleteClicked"
+      />
+        <Button
+            Text="Go Back"
+            Clicked="CancelClicked"
+            />
+    </VerticalStackLayout>
+</ContentPage>

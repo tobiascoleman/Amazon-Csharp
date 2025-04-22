@@ -1,7 +1,7 @@
 ﻿//// See https://aka.ms/new-console-template for more information
 //Console.WriteLine("Hello, World!");
 
-using eCommerce.Models;
+using Library.eCommerce.Models;
 using Library.eCommerce.Services;
 
 namespace MyApp
@@ -131,7 +131,7 @@ namespace MyApp
 						}
 
 						cartService.AddOrUpdate(
-                            new ShoppingCart {
+                            new CartItem {
                                 ProductId = productId,
                                 Name = product.Name,
                                 Quantity = qty,

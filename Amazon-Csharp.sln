@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiCommerce", "MauiCommerc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{B8A3FBFD-A877-AB3A-3856-A3E51268C209}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary", "ClassLibrary\ClassLibrary.csproj", "{32BB9982-34F4-4650-C65C-1A7412177E46}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommerceLibrary", "ClassLibrary\CommerceLibrary.csproj", "{569F9AED-668A-5673-2760-1C0FD262A25B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,10 +22,10 @@ Global
 		{B8A3FBFD-A877-AB3A-3856-A3E51268C209}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8A3FBFD-A877-AB3A-3856-A3E51268C209}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8A3FBFD-A877-AB3A-3856-A3E51268C209}.Release|Any CPU.Build.0 = Release|Any CPU
-		{32BB9982-34F4-4650-C65C-1A7412177E46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32BB9982-34F4-4650-C65C-1A7412177E46}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{32BB9982-34F4-4650-C65C-1A7412177E46}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32BB9982-34F4-4650-C65C-1A7412177E46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{569F9AED-668A-5673-2760-1C0FD262A25B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{569F9AED-668A-5673-2760-1C0FD262A25B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{569F9AED-668A-5673-2760-1C0FD262A25B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{569F9AED-668A-5673-2760-1C0FD262A25B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

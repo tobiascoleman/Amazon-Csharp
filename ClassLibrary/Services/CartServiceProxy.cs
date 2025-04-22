@@ -1,113 +1,110 @@
-using eCommerce.Models;
+using Library.eCommerce.Models;
 
 namespace Library.eCommerce.Services
 {
-	public class CartServiceProxy {
-		private CartServiceProxy() {
-			CartItems = new List<ShoppingCart?>();
-		}
-		private int LastKey {
-			get
-			{
-				if (!CartItems.Any())
-				{
-					return 0;
-				}
-				return CartItems.Select(p => p?.Id ?? 0).Max();
-			}
-		}
-
-        private static CartServiceProxy? instance;
-        private static object instanceLock = new object();
-        public static CartServiceProxy Current {
+    public class CartServiceProxy
+    {
+        private ProductServiceProxy _prodSvc = ProductServiceProxy.Current;
+        private List<CartItem> items;
+        public double CheckoutPrice;
+        public List<CartItem> CartItems
+        {
             get
             {
-                lock(instanceLock)
+                return items;
+            }
+        }
+        public static CartServiceProxy Current {  
+            get
+            {
+                if(instance == null)
                 {
-                    instance ??= new CartServiceProxy();
+                    instance = new CartServiceProxy();
                 }
 
                 return instance;
-            }
+            } 
+        }
+        private static CartServiceProxy? instance;
+        private CartServiceProxy() { 
+            items = new List<CartItem>();
         }
 
-		public ShoppingCart? AddOrUpdate(ShoppingCart ShoppingCart) {
-			var product = ProductServiceProxy.Current.Inventory.FirstOrDefault(p => p?.Id == ShoppingCart.ProductId);
-			if (product == null) {
-				Console.WriteLine("Product not found.");
-				return null;
-			}
-			var existingShoppingCart = CartItems.FirstOrDefault(ci => ci?.Id == ShoppingCart.Id);
-			if (existingShoppingCart != null) {
-				product.Quantity += existingShoppingCart.Quantity;
-			}
-			if (ShoppingCart.Quantity > product.Quantity) {
-				Console.WriteLine($"Insufficient stock. Only {product.Quantity} available.");
-				return null;
-			}
-			product.Quantity -= ShoppingCart.Quantity;
-			if (ShoppingCart.Id == 0) {
-				ShoppingCart.Id = LastKey + 1;
-				CartItems.Add(ShoppingCart);
-			} else {
-				var existing = CartItems.FirstOrDefault(ci => ci?.Id == ShoppingCart.Id);
-				if (existing != null) {
-					existing.Quantity = ShoppingCart.Quantity;
-				}
-			}
-			return ShoppingCart;
-		}
-		public ShoppingCart? Delete(int id) {
-			var item = CartItems.FirstOrDefault(ci => ci?.Id == id);
-			if (item != null) {
-				var product = ProductServiceProxy.Current.Inventory
-					.FirstOrDefault(p => p?.Id == item.ProductId);
-				if (product != null) {
-					product.Quantity += item.Quantity;
-				}
-				CartItems.Remove(item);
-			}
-			return item;
-		}
-
-        public void Checkout() {
-            if (!CartItems.Any()) {
-                Console.WriteLine("No items in cart. Exiting...");
-                return;
+        public CartItem? AddOrUpdate(CartItem item)
+        {
+            var existingInvItem = _prodSvc.GetById(item.Id);
+            if(existingInvItem == null || existingInvItem.Quantity == 0) {
+                return null;
             }
 
-            Console.WriteLine("------------- Receipt ------------- ");
-            foreach (var item in CartItems) {
-                if (item == null) continue;
-                Console.WriteLine($"{item.Name} x {item.Quantity} total: ${item.Total:F2}");
+            if (existingInvItem != null)
+            {
+                existingInvItem.Quantity--;
             }
 
-            Console.WriteLine($"Subtotal: ${Subtotal:F2}");
-            Console.WriteLine($"Total (with 7% tax): ${Total:F2}");
-            return;
+            var existingItem = CartItems.FirstOrDefault(i => i.Id == item.Id);
+            if(existingItem == null)
+            {
+                //add
+                var newItem = new CartItem(item);
+                newItem.Quantity = 1;
+                CartItems.Add(newItem);
+            } else
+            {
+                //update
+                existingItem.Quantity++;
+            }
+
+
+            return existingInvItem;
         }
 
-		public decimal Subtotal {
-			get {
-				decimal subtotal = 0;
-				foreach (var item in CartItems) {
-					if (item == null) continue;
-					subtotal += item.Total;
-				}
-				return subtotal;
+        public CartItem? ReturnItem(CartItem? item)
+        {
+            if (item?.Id <= 0 || item == null)
+            {
+                return null;
             }
-			private set {}
-		}
 
-		public decimal Total {
-			get {
-				decimal taxRate = 0.07m;
-				decimal tax = Subtotal * taxRate;
-				return Subtotal + tax;
-			}
-			private set {}
-		}
+            var itemToReturn = CartItems.FirstOrDefault(c => c.Id == item.Id);
+            if (itemToReturn != null)
+            {
+                itemToReturn.Quantity--;
+                if (_prodSvc != null && _prodSvc.Inventory != null && itemToReturn != null)
+                {
+                    var inventoryItem = _prodSvc.Inventory.FirstOrDefault(p => p != null && p.Id == itemToReturn.Id);
+                    if (inventoryItem == null)
+                    {
+                        _prodSvc.AddOrUpdate(new CartItem(itemToReturn));
+                    }
+                    else
+                    {
+                        inventoryItem.Quantity++;
+                    }
+                }
+            }
 
-		public List<ShoppingCart?> CartItems { get; private set; }
-	}
+
+            return itemToReturn;
+        }
+
+        public void AddToWishlist(CartItem item)
+        {
+            if (item == null || item.Id <= 0)
+            {
+                throw new ArgumentException("Invalid cart item.");
+            }
+
+            // Logic to add the item to a wishlist (not implemented in the current context)
+            // For now, we can log or simulate the addition.
+            Console.WriteLine($"Item with ID {item.Id} added to wishlist.");
+        }
+        public void SortCartItems(Comparison<CartItem> comparison)
+        {
+            if (items != null)
+            {
+                items.Sort(comparison);
+            }
+        }
+    }
 }
