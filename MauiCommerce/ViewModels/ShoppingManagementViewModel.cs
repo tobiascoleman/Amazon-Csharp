@@ -15,26 +15,47 @@ namespace Maui.eCommerce.ViewModels
     {
         private ProductServiceProxy _invSvc = ProductServiceProxy.Current;
         private CartServiceProxy _cartSvc = CartServiceProxy.Current;
+        private CartListService _cartListSvc = CartListService.Current;
        public CartItem? SelectedItem { get; set; }
        public CartItem? SelectedCartItem { get; set; }
+        public string SortOption = "Name";
 
-        public ObservableCollection<CartItem?> Inventory
+        public ObservableCollection<CartItemViewModel?> Inventory
         {
             get
             {
-                return new ObservableCollection<CartItem?>(_invSvc.Inventory
-                    .Where(i => i?.Quantity > 0)
-                    );
+                var filteredList = _invSvc.Inventory.Where(i => i?.Quantity > 0)
+                    .Where(i => i != null)
+                    .Select(i => new CartItemViewModel(i!));
+                switch (SortOption)
+                {
+                    case "Name":
+                        return new ObservableCollection<CartItemViewModel?>(filteredList.OrderBy(i => i?.Model.Product?.Name));
+                    case "Price":
+                        return new ObservableCollection<CartItemViewModel?>(filteredList.OrderBy(i => i?.Model.Price));
+                    default:
+                        return new ObservableCollection<CartItemViewModel?>(filteredList);
+                }
+                
             }
         }
 
-        public ObservableCollection<CartItem?> ShoppingCart
+        public ObservableCollection<CartItemViewModel?> ShoppingCart
         {
             get
             {
-                return new ObservableCollection<CartItem?>(_cartSvc.CartItems
-                    .Where(i => i?.Quantity > 0)
-                    );
+                var filteredList = _cartListSvc.ReturnCurrentList()?.CartItems?.Where(i => i?.Quantity > 0)
+                    .Where(i => i != null)
+                    .Select(i => new CartItemViewModel(i!));
+                switch (SortOption)
+                {
+                    case "Name":
+                        return new ObservableCollection<CartItemViewModel?>(filteredList.OrderBy(i => i?.Model.Product?.Name));
+                    case "Price":
+                        return new ObservableCollection<CartItemViewModel?>(filteredList.OrderBy(i => i?.Model.Price));
+                    default:
+                        return new ObservableCollection<CartItemViewModel?>(filteredList);
+                }
             }
         }
 
@@ -85,25 +106,16 @@ namespace Maui.eCommerce.ViewModels
             }
         }
 
-        public void SortCartByName()
-        {
-            _cartSvc.SortCartItems((x, y) => string.Compare(x?.Product?.Name, y?.Product?.Name, StringComparison.Ordinal));
-            NotifyPropertyChanged(nameof(ShoppingCart));
-        }
-
-        public void SortCartByPrice()
-        {
-            _cartSvc.SortCartItems((x, y) => x?.Product?.Price.CompareTo(y?.Product?.Price) ?? 0);
-            NotifyPropertyChanged(nameof(ShoppingCart));
-        }
-
-        public void AddToWishlist()
-        {
-            if (SelectedCartItem != null)
+        public void ChangeSort() {
+            if (SortOption == "Name")
             {
-                _cartSvc.AddToWishlist(SelectedCartItem);
-                NotifyPropertyChanged(nameof(ShoppingCart));
+                SortOption = "Price";
             }
+            else
+            {
+                SortOption = "Name";
+            }
+            NotifyPropertyChanged(nameof(Inventory));
         }
     }
 }

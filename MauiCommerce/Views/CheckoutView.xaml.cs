@@ -1,32 +1,25 @@
-using System;
-using System.Collections.Generic;
-using Library.eCommerce.Models;
-using Library.eCommerce.Services;
-using Microsoft.Maui.Controls;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
+using System.ComponentModel;
+using Maui.eCommerce.ViewModels;
+namespace Maui.eCommerce.Views;
 
-namespace Maui.eCommerce.Views
+
+public partial class CheckoutView : ContentPage
 {
-	public partial class CheckoutView : ContentPage
+    public CheckoutView()
 	{
-		public ObservableCollection<CartItem?> CartItems { get; set; }
-		public decimal TotalPrice { get; set; }
+		InitializeComponent();
+        BindingContext = new CheckoutViewModel();
+    }
 
-		public CheckoutView()
-		{
-			InitializeComponent();
+    public void ReturnClicked(object sender, EventArgs e)
+    {
+        (BindingContext as CheckoutViewModel).RefreshUI();
+        Shell.Current.GoToAsync($"//MainPage");        
+    }
 
-			CartItems = new ObservableCollection<CartItem?>(
-				CartServiceProxy.Current.CartItems.Where(i => i?.Quantity > 0));
-
-			TotalPrice = CartItems.Sum(item => (item?.Quantity ?? 0) * (item?.Product?.Price ?? 0m));
-
-			BindingContext = this;
-		}
-
-		protected override bool OnBackButtonPressed() => true;
-
-	}
+    public void CheckOutClicked(object sender, EventArgs e)
+    {
+        (BindingContext as CheckoutViewModel).RefreshUI();
+        (BindingContext as CheckoutViewModel).ClearOnCheckout();
+    }
 }

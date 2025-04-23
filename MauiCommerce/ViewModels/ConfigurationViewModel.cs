@@ -1,45 +1,22 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Library.eCommerce.Services;
 
 namespace Maui.eCommerce.ViewModels
 {
-    public class ConfigurationViewModel : INotifyPropertyChanged
+    public class ConfigurationViewModel
     {
-        private string _taxRate;
+        public string ? tax_input { get; set; }
+        public CartServiceProxy svc = CartServiceProxy.Current;
 
-        public string TaxRate
+        public void set_tax_input()
         {
-            get => _taxRate;
-            set
-            {
-                if (_taxRate != value)
-                {
-                    _taxRate = value;
-                    NotifyPropertyChanged();
-                }
-            }
+            if (tax_input == null) { return; }
+            svc.taxRate = double.Parse(tax_input);
         }
-
-        public ICommand SaveTaxRateCommand { get; }
-
-        public ConfigurationViewModel()
-        {
-            SaveTaxRateCommand = new Command(SaveTaxRate);
-        }
-
-        private void SaveTaxRate()
-        {
-            // Save the tax rate to a persistent storage or service
-            Application.Current.Properties["TaxRate"] = TaxRate;
-            Application.Current.SavePropertiesAsync();
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+    
     }
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Library.eCommerce.Models;
 
 namespace Library.eCommerce.Services
@@ -7,6 +8,8 @@ namespace Library.eCommerce.Services
         private ProductServiceProxy _prodSvc = ProductServiceProxy.Current;
         private List<CartItem> items;
         public double CheckoutPrice;
+
+        public double taxRate { get; set; }
         public List<CartItem> CartItems
         {
             get
@@ -14,21 +17,31 @@ namespace Library.eCommerce.Services
                 return items;
             }
         }
-        public static CartServiceProxy Current {  
+        public static CartServiceProxy Current {
             get
             {
-                if(instance == null)
+                if (instance == null)
                 {
                     instance = new CartServiceProxy();
                 }
 
                 return instance;
-            } 
+            }
         }
         private static CartServiceProxy? instance;
-        private CartServiceProxy() { 
+
+        private CartServiceProxy() {
             items = new List<CartItem>();
+            taxRate = 5;
         }
+
+        public static CartServiceProxy? AddNewShoppingCart()
+        {
+            CartServiceProxy cartService = new CartServiceProxy();
+            return cartService;
+        }
+        public void ClearList() { items = new List<CartItem>(); }
+        //Sets the list to an empty, new, list
 
         public CartItem? AddOrUpdate(CartItem item)
         {
@@ -70,41 +83,16 @@ namespace Library.eCommerce.Services
             if (itemToReturn != null)
             {
                 itemToReturn.Quantity--;
-                if (_prodSvc != null && _prodSvc.Inventory != null && itemToReturn != null)
+                var inventoryItem = _prodSvc.Inventory.FirstOrDefault(p => p.Id == itemToReturn.Id); ;
+                if(inventoryItem == null)
                 {
-                    var inventoryItem = _prodSvc.Inventory.FirstOrDefault(p => p != null && p.Id == itemToReturn.Id);
-                    if (inventoryItem == null)
-                    {
-                        _prodSvc.AddOrUpdate(new CartItem(itemToReturn));
-                    }
-                    else
-                    {
-                        inventoryItem.Quantity++;
-                    }
+                    _prodSvc.AddOrUpdate(new CartItem(itemToReturn));
+                } else
+                {
+                    inventoryItem.Quantity++;
                 }
             }
-
-
             return itemToReturn;
-        }
-
-        public void AddToWishlist(CartItem item)
-        {
-            if (item == null || item.Id <= 0)
-            {
-                throw new ArgumentException("Invalid cart item.");
-            }
-
-            // Logic to add the item to a wishlist (not implemented in the current context)
-            // For now, we can log or simulate the addition.
-            Console.WriteLine($"Item with ID {item.Id} added to wishlist.");
-        }
-        public void SortCartItems(Comparison<CartItem> comparison)
-        {
-            if (items != null)
-            {
-                items.Sort(comparison);
-            }
         }
     }
 }

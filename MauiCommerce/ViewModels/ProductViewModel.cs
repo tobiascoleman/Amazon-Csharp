@@ -21,7 +21,10 @@ namespace Maui.eCommerce.ViewModels
             {
                 if(Model != null && Model.Product?.Name != value)
                 {
-                    Model.Product.Name = value;
+                    if (Model.Product != null)
+                    {
+                        Model.Product.Name = value;
+                    }
                 }
             }
         }
@@ -42,16 +45,36 @@ namespace Maui.eCommerce.ViewModels
             }
         }
 
+        public int? Price
+        {
+            get
+            {
+                return Model?.Price;
+            }
+            set
+            {
+                if (Model != null && Model.Price != value)
+                {
+                    Model.Price = value ?? 0;
+                }
+            }
+        }
         public CartItem? Model { get; set; }
 
         public void AddOrUpdate()
         {
-            ProductServiceProxy.Current.AddOrUpdate(Model);
+            if (Model != null)
+            {
+                ProductServiceProxy.Current.AddOrUpdate(Model);
+            }
         }
 
         public void Undo()
         {
-            ProductServiceProxy.Current.AddOrUpdate(cachedModel);
+            if (cachedModel != null)
+            {
+                ProductServiceProxy.Current.AddOrUpdate(cachedModel);
+            }
         }
 
         public ProductViewModel() {

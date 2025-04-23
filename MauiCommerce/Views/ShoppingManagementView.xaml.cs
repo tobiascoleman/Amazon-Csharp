@@ -23,28 +23,21 @@ public partial class ShoppingManagementView : ContentPage
     {
         (BindingContext as ShoppingManagementViewModel).RefreshUX();
     }
+
 	private async void OnCheckoutClicked(object sender, EventArgs e)
 	{
-		await Shell.Current.GoToAsync("CheckoutPage");
+		await Shell.Current.GoToAsync("//Checkout");
 	}
 
-    private void SortCartByChanged(object sender, EventArgs e)
-    {
-        var picker = sender as Picker;
-        var selectedSort = picker?.SelectedItem as string;
+    private async void OnChangeCartClicked(object sender, EventArgs e)
+	{
+		await Shell.Current.GoToAsync("//CartList");
+	}
 
-        if (selectedSort == "Name")
-        {
-            (BindingContext as ShoppingManagementViewModel)?.SortCartByName();
-        }
-        else if (selectedSort == "Price")
-        {
-            (BindingContext as ShoppingManagementViewModel)?.SortCartByPrice();
-        }
+    public void ChangeFilterClicked(object sender, EventArgs e)
+    {
+        (BindingContext as ShoppingManagementViewModel).ChangeSort();
+        (BindingContext as ShoppingManagementViewModel).RefreshUX();
     }
 
-    private void AddToWishlistClicked(object sender, EventArgs e)
-    {
-        (BindingContext as ShoppingManagementViewModel)?.AddToWishlist();
-    }
 }

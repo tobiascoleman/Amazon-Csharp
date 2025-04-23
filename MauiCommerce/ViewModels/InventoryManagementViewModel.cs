@@ -17,14 +17,7 @@ namespace Maui.eCommerce.ViewModels
         public string? Query { get; set; }
         private ProductServiceProxy _svc = ProductServiceProxy.Current;
 
-        public string AddQuantity { get; set; } = "1";
-
-        public Command<CartItem> AddToCartCommand { get; }
-
-        public InventoryManagementViewModel()
-        {
-            AddToCartCommand = new Command<CartItem>(AddToCart);
-        }
+        public string SortOption = "Name";
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -48,6 +41,16 @@ namespace Maui.eCommerce.ViewModels
             get
             {
                 var filteredList = _svc.Inventory.Where(p => p?.Product?.Name?.ToLower().Contains(Query?.ToLower() ?? string.Empty) ?? false);
+                
+                switch (SortOption)
+                {
+                    case "Name":
+                        filteredList = filteredList.OrderBy(I => I?.Product?.Name);
+                        break;
+                    case "Price":
+                        filteredList = filteredList.OrderBy(I => I?.Price);
+                        break;
+                }
                 return new ObservableCollection<CartItem?>(filteredList);
             }
         }
@@ -59,29 +62,15 @@ namespace Maui.eCommerce.ViewModels
             return item;
         }
 
-        private void AddToCart(CartItem item)
-        {
-            if (int.TryParse(AddQuantity, out int quantity) && quantity > 0)
+        public void ChangeSort() {
+            if (SortOption == "Name")
             {
-                for (int i = 0; i < quantity; i++)
-                {
-                    CartServiceProxy.Current.AddOrUpdate(item);
-                }
-                NotifyPropertyChanged(nameof(Inventory));
+                SortOption = "Price";
             }
-        }
-
-        public void SortInventoryByName()
-        {
-            var sortedList = _svc.Inventory.OrderBy(p => p?.Product?.Name).ToList();
-            _svc.Inventory = new ObservableCollection<CartItem?>(sortedList);
-            NotifyPropertyChanged(nameof(Inventory));
-        }
-
-        public void SortInventoryByPrice()
-        {
-            var sortedList = _svc.Inventory.OrderBy(p => p?.Product?.Price).ToList();
-            _svc.Inventory = new ObservableCollection<CartItem?>(sortedList);
+            else
+            {
+                SortOption = "Name";
+            }
             NotifyPropertyChanged(nameof(Inventory));
         }
     }

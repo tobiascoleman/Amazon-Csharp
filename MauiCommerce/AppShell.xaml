@@ -21,15 +21,20 @@
         ContentTemplate="{DataTemplate views:ProductDetails}"
         Route="Product" />
     <ShellContent
-        Title="Shop"
+        Title="Shopping"
         ContentTemplate="{DataTemplate views:ShoppingManagementView}"
         Route="ShoppingManagement" />
     <ShellContent
-        Title="Shop"
+        Title="Checkout"
         ContentTemplate="{DataTemplate views:CheckoutView}"
-        Route="Checkout"    />
+        Route="Checkout" />
     <ShellContent
         Title="Configuration"
         ContentTemplate="{DataTemplate views:ConfigurationView}"
         Route="Configuration" />
+    <ShellContent
+        Title="CartList"
+        ContentTemplate="{DataTemplate views:CartListView}"
+        Route="CartList" />
+
 </Shell>
