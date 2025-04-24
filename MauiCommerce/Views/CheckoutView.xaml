@@ -2,42 +2,56 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Maui.eCommerce.Views.CheckoutView"
-             Title="Checkout">
-    <VerticalStackLayout>
-		<Button Text="CheckOut" Clicked="CheckOutClicked"/>
-        <Label 
-            Text="You Spent: $"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-        <Label Text="{Binding CheckoutCost}"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-
-            <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="7*"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <ListView Grid.Row="0"
-                ItemsSource="{Binding ShoppingCart}"
-                >
-                <!--<ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-
-                        </ViewCell>
-                    </DataTemplate>
-
-                </ListView.ItemTemplate>-->
-            </ListView>
-        </Grid>
-        </Grid>
-
-
-        <Button Text="Return to Main Screen" Clicked="ReturnClicked"/>
-    </VerticalStackLayout>
+             Title="Checkout"
+             NavigatedTo="ContentPage_NavigatedTo">
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="10">
+            <!-- Cart Items Section -->
+            <Label Text="Items" FontSize="18" FontAttributes="Bold" Margin="0,5,0,5" />
+            <ListView ItemsSource="{Binding ShoppingCart}" HeightRequest="200" />
+            
+            <!-- Price Summary Section -->
+            <StackLayout Margin="0,15,0,15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <Label Grid.Column="0" Text="Subtotal" />
+                    <Label Grid.Column="1" Text="{Binding SubTotal, StringFormat='${0:F2}'}" />
+                </Grid>
+                
+                <Grid Margin="0,5,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <Label Grid.Column="0" Text="Tax" />
+                    <Label Grid.Column="1" Text="{Binding TaxAmount, StringFormat='${0:F2}'}" />
+                </Grid>
+                
+                <BoxView/>
+                
+                <Grid Margin="0,5,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <Label Grid.Column="0" Text="Total" FontAttributes="Bold" FontSize="16" />
+                    <Label Grid.Column="1" Text="{Binding CheckoutCost, StringFormat='${0:F2}'}" 
+                           FontAttributes="Bold" FontSize="16" />
+                </Grid>
+            </StackLayout>
+            
+            <!-- Buttons -->
+            <Button Text="Complete Checkout" 
+                    Clicked="CheckOutClicked"/>
+                    
+            <Button Text="Return to Shopping" 
+                    Clicked="ReturnClicked"/>
+        </StackLayout>
+    </ScrollView>
 </ContentPage>

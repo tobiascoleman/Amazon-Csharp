@@ -19,6 +19,24 @@ namespace Maui.eCommerce.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        public double SubTotal
+        {
+            get
+            {
+                __svc = _shopsvc.ReturnCurrentList() ?? throw new InvalidOperationException("ReturnCurrentList() returned null.");
+                return Math.Round(__svc.CheckoutPrice, 2);
+            }
+        }
+
+        public double TaxAmount
+        {
+            get
+            {
+                __svc = _shopsvc.ReturnCurrentList() ?? throw new InvalidOperationException("ReturnCurrentList() returned null.");
+                return Math.Round((__svc.CheckoutPrice * __svc.taxRate) / 100, 2);
+            }
+        }
+
         public double CheckoutCost
         {
             get {
@@ -52,6 +70,8 @@ namespace Maui.eCommerce.ViewModels
                 }
                 CheckoutCost = Math.Round(totalCost, 2);
                 NotifyPropertyChanged(nameof(CheckoutCost));
+                NotifyPropertyChanged(nameof(SubTotal));
+                NotifyPropertyChanged(nameof(TaxAmount));
 
                 var toRet = new ObservableCollection<CartItem?>(__svc.CartItems
                     .Where(i => i?.Quantity > 0)
@@ -72,6 +92,8 @@ namespace Maui.eCommerce.ViewModels
 
         public void RefreshUI()
         {
+            NotifyPropertyChanged(nameof(SubTotal));
+            NotifyPropertyChanged(nameof(TaxAmount));
             NotifyPropertyChanged(nameof(CheckoutCost));
             NotifyPropertyChanged(nameof(ShoppingCart));
         }

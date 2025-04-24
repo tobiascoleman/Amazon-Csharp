@@ -16,8 +16,51 @@ namespace Maui.eCommerce.ViewModels
         public CartItem? SelectedProduct { get; set; }
         public string? Query { get; set; }
         private ProductServiceProxy _svc = ProductServiceProxy.Current;
+        private ObservableCollection<CartItem?> _inventory;
 
-        public string SortOption = "Name";
+        private string _sortOption = "Name";
+        public string SortOption
+        {
+            get => _sortOption;
+            set
+            {
+                if (_sortOption != value)
+                {
+                    _sortOption = value;
+                    NotifyPropertyChanged();
+                    UpdateInventory();
+                }
+            }
+        }
+
+        public InventoryManagementViewModel()
+        {
+            _inventory = new ObservableCollection<CartItem?>();
+            UpdateInventory();
+        }
+
+        private void UpdateInventory()
+        {
+            var filteredList = _svc.Inventory.Where(p => p?.Product?.Name?.ToLower().Contains(Query?.ToLower() ?? string.Empty) ?? false);
+            
+            IEnumerable<CartItem?> orderedList;
+            if (SortOption == "Name")
+            {
+                orderedList = filteredList.OrderBy(i => i?.Product?.Name);
+            }
+            else // "Price"
+            {
+                orderedList = filteredList.OrderBy(i => i?.Price);
+            }
+
+            _inventory.Clear();
+            foreach (var item in orderedList)
+            {
+                _inventory.Add(item);
+            }
+            
+            NotifyPropertyChanged(nameof(Inventory));
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -33,45 +76,30 @@ namespace Maui.eCommerce.ViewModels
 
         public void RefreshProductList()
         {
-            NotifyPropertyChanged(nameof(Inventory));
+            UpdateInventory();
         }
 
         public ObservableCollection<CartItem?> Inventory
         {
-            get
-            {
-                var filteredList = _svc.Inventory.Where(p => p?.Product?.Name?.ToLower().Contains(Query?.ToLower() ?? string.Empty) ?? false);
-                
-                switch (SortOption)
-                {
-                    case "Name":
-                        filteredList = filteredList.OrderBy(I => I?.Product?.Name);
-                        break;
-                    case "Price":
-                        filteredList = filteredList.OrderBy(I => I?.Price);
-                        break;
-                }
-                return new ObservableCollection<CartItem?>(filteredList);
-            }
+            get => _inventory;
         }
 
         public CartItem? Delete()
         {
             var item = _svc.Delete(SelectedProduct?.Id ?? 0);
-            NotifyPropertyChanged("Inventory");
+            UpdateInventory();
             return item;
         }
 
+        public CartItem? DeleteItem(int itemId)
+        {
+            var item = _svc.Delete(itemId);
+            UpdateInventory();
+            return item;
+        }
+        
         public void ChangeSort() {
-            if (SortOption == "Name")
-            {
-                SortOption = "Price";
-            }
-            else
-            {
-                SortOption = "Name";
-            }
-            NotifyPropertyChanged(nameof(Inventory));
+            SortOption = SortOption == "Name" ? "Price" : "Name";
         }
     }
 }

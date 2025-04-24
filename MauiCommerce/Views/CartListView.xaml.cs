@@ -24,5 +24,7 @@ public partial class CartListView : ContentPage
 	public void switchShoppingCart(object sender, EventArgs e)
 	{
 		(BindingContext as CartsViewModel).ChangeCurrentShoppingCart();
+		// Go back to ShoppingManagement page
+		Shell.Current.GoToAsync("//ShoppingManagement");
     }
 }

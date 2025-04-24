@@ -28,16 +28,14 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0" Text="{Binding Display}"/>
-                            <Button Grid.Column="1" Text="Edit"/>
-                            <Button Grid.Column="2" Text="Delete"/>
+                            <Button Grid.Column="1" Text="Edit" CommandParameter="{Binding Id}" Clicked="InlineEditClicked"/>
+                            <Button Grid.Column="2" Text="Delete" CommandParameter="{Binding Id}" Clicked="InlineDeleteClicked"/>
                         </Grid>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Button Text="Add" Clicked="AddClicked"/>
-        <Button Text="Edit" Clicked="EditClicked"/>
-        <Button Text="Delete" Clicked="DeleteClicked"/>
+        <Button Text="Add New Product" Clicked="AddClicked"/>
         <Button Text="Go Back" Clicked="CancelClicked"/>
     </VerticalStackLayout>
 </ContentPage>

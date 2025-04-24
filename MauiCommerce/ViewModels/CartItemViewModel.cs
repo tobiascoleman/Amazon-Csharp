@@ -13,30 +13,33 @@ namespace Maui.eCommerce.ViewModels
     {
         public CartItem Model { get; set; }
 
-        public string? boxValue { get; set; } = "1";
+        public string? amount { get; set; } = "1";
 
         public ICommand? AddCommand { get; set; }
 
         public ICommand? AddCustomAmountClicked { get; set; }
 
         private ProductServiceProxy _invSvc = ProductServiceProxy.Current;
-        private CartServiceProxy _cartSvc = CartServiceProxy.Current;
+        private CartListService _cartListSvc = CartListService.Current;
+        
+        // Get the current cart service
+        private CartServiceProxy? CurrentCart => _cartListSvc.ReturnCurrentList();
 
         private void DoAdd()
         {
-            CartServiceProxy.Current.AddOrUpdate(Model);
+            CurrentCart?.AddOrUpdate(Model);
         }
 
         private void AddCustomInCart()
         {
-            if (boxValue == null ) { return ; }
-            int value = int.Parse(boxValue);
+            if (amount == null ) { return ; }
+            int value = int.Parse(amount);
 
             if (value < 1) { return; }
 
             for (int i = 0; i < value; i++)
             {
-                _cartSvc.AddOrUpdate(Model);
+                CurrentCart?.AddOrUpdate(Model);
             }
         }
 

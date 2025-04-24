@@ -37,6 +37,22 @@ public partial class InventoryManagementView : ContentPage
         Shell.Current.GoToAsync($"//Product?productId={productId}");
     }
 
+    private void InlineEditClicked(object sender, EventArgs e)
+    {
+        if (sender is Button button && button.CommandParameter is int productId)
+        {
+            Shell.Current.GoToAsync($"//Product?productId={productId}");
+        }
+    }
+
+    private void InlineDeleteClicked(object sender, EventArgs e)
+    {
+        if (sender is Button button && button.CommandParameter is int productId)
+        {
+            (BindingContext as InventoryManagementViewModel)?.DeleteItem(productId);
+        }
+    }
+
     private void SearchClicked(object sender, EventArgs e)
     {
         (BindingContext as InventoryManagementViewModel)?.RefreshProductList();

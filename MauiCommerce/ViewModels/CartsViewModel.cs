@@ -49,6 +49,9 @@ namespace Maui.eCommerce.ViewModels
             if (SelectedCart != null)
             {
                 cartSvc.currentCartId = SelectedCart.Id;
+                NotifyPropertyChanged(nameof(arrayOfShoppingCarts));
+                NotifyPropertyChanged(nameof(SelectedCart));
+                NotifyPropertyChanged(nameof(cartSvc));
             }
         }
     }

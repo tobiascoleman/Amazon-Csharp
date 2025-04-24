@@ -31,7 +31,7 @@
             </ListView.ItemTemplate>
         </ListView>
         <Button Text="Add New Cart" Clicked="AddNewShoppingCart"/>
-        <Button Text="Switch By Selected Cart" Clicked="switchShoppingCart"/>
-        <Button Text=" Go Back to Shopping Cart" Clicked="GoBackToShoppingCart"/>
+        <Button Text="Switch To Selected Cart" Clicked="switchShoppingCart"/>
+        <Button Text="Go Back to Shopping Cart" Clicked="GoBackToShoppingCart"/>
     </VerticalStackLayout>
 </ContentPage>

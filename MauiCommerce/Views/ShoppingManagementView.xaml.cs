@@ -10,6 +10,11 @@ public partial class ShoppingManagementView : ContentPage
 		BindingContext = new ShoppingManagementViewModel();
 	}
 
+    private void ContentPage_NavigatedTo(object sender, NavigatedToEventArgs e)
+    {
+        (BindingContext as ShoppingManagementViewModel)?.RefreshUI();
+    }
+
     private void RemoveFromCartClicked(object sender, EventArgs e)
     {
         (BindingContext as ShoppingManagementViewModel).ReturnItem();
@@ -21,7 +26,7 @@ public partial class ShoppingManagementView : ContentPage
 
     private void InlineAddClicked(object sender, EventArgs e)
     {
-        (BindingContext as ShoppingManagementViewModel).RefreshUX();
+        (BindingContext as ShoppingManagementViewModel).RefreshUI();
     }
 
 	private async void OnCheckoutClicked(object sender, EventArgs e)
@@ -37,7 +42,11 @@ public partial class ShoppingManagementView : ContentPage
     public void ChangeFilterClicked(object sender, EventArgs e)
     {
         (BindingContext as ShoppingManagementViewModel).ChangeSort();
-        (BindingContext as ShoppingManagementViewModel).RefreshUX();
+    }
+
+    public void OnCancelClicked(object sender, EventArgs e)
+    {
+        Shell.Current.GoToAsync("//MainPage");
     }
 
 }

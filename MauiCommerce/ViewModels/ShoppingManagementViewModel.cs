@@ -14,49 +14,102 @@ namespace Maui.eCommerce.ViewModels
     public class ShoppingManagementViewModel : INotifyPropertyChanged
     {
         private ProductServiceProxy _invSvc = ProductServiceProxy.Current;
-        private CartServiceProxy _cartSvc = CartServiceProxy.Current;
+        // Keep reference to CartListService only
         private CartListService _cartListSvc = CartListService.Current;
-       public CartItem? SelectedItem { get; set; }
-       public CartItem? SelectedCartItem { get; set; }
-        public string SortOption = "Name";
+        private string _sortOption = "Name";
+        private ObservableCollection<CartItemViewModel?> _inventory;
+        private ObservableCollection<CartItemViewModel?> _shoppingCart;
+        
+        public CartItem? SelectedItem { get; set; }
+        public CartItem? SelectedCartItem { get; set; }
+        
+        // Property to get the current cart service
+        private CartServiceProxy? CurrentCart => _cartListSvc.ReturnCurrentList();
+        
+        public string SortOption
+        {
+            get => _sortOption;
+            set
+            {
+                if (_sortOption != value)
+                {
+                    _sortOption = value;
+                    NotifyPropertyChanged();
+                    UpdateCollections();
+                }
+            }
+        }
+
+        public ShoppingManagementViewModel()
+        {
+            _inventory = new ObservableCollection<CartItemViewModel?>();
+            _shoppingCart = new ObservableCollection<CartItemViewModel?>();
+            UpdateCollections();
+        }
+
+        private void UpdateCollections()
+        {
+            // Update Inventory
+            var filteredInventory = _invSvc.Inventory
+                .Where(i => i?.Quantity > 0)
+                .Where(i => i != null)
+                .Select(i => new CartItemViewModel(i!));
+
+            IEnumerable<CartItemViewModel?> orderedInventory;
+                
+            if (SortOption == "Name")
+            {
+                orderedInventory = filteredInventory.OrderBy(i => i?.Model.Product?.Name);
+            }
+            else // "Price"
+            {
+                orderedInventory = filteredInventory.OrderBy(i => i?.Model.Price);
+            }
+
+            _inventory.Clear();
+            foreach (var item in orderedInventory)
+            {
+                _inventory.Add(item);
+            }
+            
+            // Update ShoppingCart
+            var filteredCart = CurrentCart?.CartItems?
+                .Where(i => i?.Quantity > 0)
+                .Where(i => i != null)
+                .Select(i => new CartItemViewModel(i!));
+
+            if (filteredCart != null)
+            {
+                IEnumerable<CartItemViewModel?> orderedCart;
+                
+                if (SortOption == "Name")
+                {
+                    orderedCart = filteredCart.OrderBy(i => i?.Model.Product?.Name);
+                }
+                else // "Price"
+                {
+                    orderedCart = filteredCart.OrderBy(i => i?.Model.Price);
+                }
+
+                _shoppingCart.Clear();
+                foreach (var item in orderedCart)
+                {
+                    _shoppingCart.Add(item);
+                }
+            }
+            
+            NotifyPropertyChanged(nameof(Inventory));
+            NotifyPropertyChanged(nameof(ShoppingCart));
+        }
 
         public ObservableCollection<CartItemViewModel?> Inventory
         {
-            get
-            {
-                var filteredList = _invSvc.Inventory.Where(i => i?.Quantity > 0)
-                    .Where(i => i != null)
-                    .Select(i => new CartItemViewModel(i!));
-                switch (SortOption)
-                {
-                    case "Name":
-                        return new ObservableCollection<CartItemViewModel?>(filteredList.OrderBy(i => i?.Model.Product?.Name));
-                    case "Price":
-                        return new ObservableCollection<CartItemViewModel?>(filteredList.OrderBy(i => i?.Model.Price));
-                    default:
-                        return new ObservableCollection<CartItemViewModel?>(filteredList);
-                }
-                
-            }
+            get => _inventory;
         }
 
         public ObservableCollection<CartItemViewModel?> ShoppingCart
         {
-            get
-            {
-                var filteredList = _cartListSvc.ReturnCurrentList()?.CartItems?.Where(i => i?.Quantity > 0)
-                    .Where(i => i != null)
-                    .Select(i => new CartItemViewModel(i!));
-                switch (SortOption)
-                {
-                    case "Name":
-                        return new ObservableCollection<CartItemViewModel?>(filteredList.OrderBy(i => i?.Model.Product?.Name));
-                    case "Price":
-                        return new ObservableCollection<CartItemViewModel?>(filteredList.OrderBy(i => i?.Model.Price));
-                    default:
-                        return new ObservableCollection<CartItemViewModel?>(filteredList);
-                }
-            }
+            get => _shoppingCart;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -70,52 +123,40 @@ namespace Maui.eCommerce.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void RefreshUX()
+        public void RefreshUI()
         {
-            NotifyPropertyChanged(nameof(Inventory));
-            NotifyPropertyChanged(nameof(ShoppingCart));
+            UpdateCollections();
         }
 
         public void PurchaseItem()
         {
-            if (SelectedItem != null)
+            if (SelectedItem != null && CurrentCart != null)
             {
                 var shouldRefresh = SelectedItem.Quantity >= 1;
-                var updatedItem = _cartSvc.AddOrUpdate(SelectedItem);
+                var updatedItem = CurrentCart.AddOrUpdate(SelectedItem);
 
                 if(updatedItem != null && shouldRefresh) {
-                    NotifyPropertyChanged(nameof(Inventory));
-                    NotifyPropertyChanged(nameof(ShoppingCart));
+                    UpdateCollections();
                 }
-
             }
         }
 
         public void ReturnItem()
         {
-            if (SelectedCartItem != null) {
+            if (SelectedCartItem != null && CurrentCart != null) {
                 var shouldRefresh = SelectedCartItem.Quantity >= 1;
                 
-                var updatedItem = _cartSvc.ReturnItem(SelectedCartItem);
+                var updatedItem = CurrentCart.ReturnItem(SelectedCartItem);
 
                 if (updatedItem != null && shouldRefresh)
                 {
-                    NotifyPropertyChanged(nameof(Inventory));
-                    NotifyPropertyChanged(nameof(ShoppingCart));
+                    UpdateCollections();
                 }
             }
         }
 
         public void ChangeSort() {
-            if (SortOption == "Name")
-            {
-                SortOption = "Price";
-            }
-            else
-            {
-                SortOption = "Name";
-            }
-            NotifyPropertyChanged(nameof(Inventory));
+            SortOption = SortOption == "Name" ? "Price" : "Name";
         }
     }
 }
