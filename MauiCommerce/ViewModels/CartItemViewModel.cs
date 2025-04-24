@@ -18,6 +18,8 @@ namespace Maui.eCommerce.ViewModels
         public ICommand? AddCommand { get; set; }
 
         public ICommand? AddCustomAmountClicked { get; set; }
+        
+        public ICommand? RemoveCommand { get; set; }
 
         private ProductServiceProxy _invSvc = ProductServiceProxy.Current;
         private CartListService _cartListSvc = CartListService.Current;
@@ -42,11 +44,17 @@ namespace Maui.eCommerce.ViewModels
                 CurrentCart?.AddOrUpdate(Model);
             }
         }
+        
+        private void DoRemove()
+        {
+            CurrentCart?.ReturnItem(Model);
+        }
 
         void SetupCommands()
         {
             AddCommand = new Command(DoAdd);
             AddCustomAmountClicked = new Command(AddCustomInCart);
+            RemoveCommand = new Command(DoRemove);
         }
 
         public CartItemViewModel()

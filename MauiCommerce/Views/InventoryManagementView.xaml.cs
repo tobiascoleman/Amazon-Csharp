@@ -11,11 +11,6 @@ public partial class InventoryManagementView : ContentPage
 		BindingContext = new InventoryManagementViewModel();
 	}
 
-    private void DeleteClicked(object sender, EventArgs e)
-    {
-        (BindingContext as InventoryManagementViewModel)?.Delete();
-    }
-
     private void CancelClicked(object sender, EventArgs e)
     {
 		Shell.Current.GoToAsync("//MainPage");
@@ -29,12 +24,6 @@ public partial class InventoryManagementView : ContentPage
     private void ContentPage_NavigatedTo(object sender, NavigatedToEventArgs e)
     {
         (BindingContext as InventoryManagementViewModel)?.RefreshProductList();
-    }
-
-    private void EditClicked(object sender, EventArgs e)
-    {
-        var productId = (BindingContext as InventoryManagementViewModel)?.SelectedProduct?.Id;
-        Shell.Current.GoToAsync($"//Product?productId={productId}");
     }
 
     private void InlineEditClicked(object sender, EventArgs e)

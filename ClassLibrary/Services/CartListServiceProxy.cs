@@ -26,9 +26,11 @@ namespace Library.eCommerce.Services
         private static CartListService? instance;
 
         private CartListService() { 
-            Carts = new List<ShoppingCart>();
-            Carts.Add(new ShoppingCart(0, CartServiceProxy.Current));
-            Carts.Add(new ShoppingCart(1, CartServiceProxy.AddNewShoppingCart()));
+            Carts =
+            [
+                new ShoppingCart(0, CartServiceProxy.Current, "Default"),
+                new ShoppingCart(1, CartServiceProxy.AddNewShoppingCart(), "Wishlist"),
+            ];
         }
 
         public int GetNextId()
@@ -36,15 +38,15 @@ namespace Library.eCommerce.Services
             return Carts.Max(p => p.Id) + 1;
         }
 
-        public void AddToShoppingCart()
+        public void AddToShoppingCart(string name = "New Cart")
         {
             CartServiceProxy? newService = CartServiceProxy.AddNewShoppingCart();
-            Carts.Add(new ShoppingCart(GetNextId(), newService));
+            Carts.Add(new ShoppingCart(GetNextId(), newService, name));
         }
 
         public CartServiceProxy? ReturnCurrentList()
         {
-            return Carts[currentCartId]?.ShopService;
+            return Carts[currentCartId]?.CartService;
         }
 
     }

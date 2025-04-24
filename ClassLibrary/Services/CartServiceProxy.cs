@@ -7,9 +7,24 @@ namespace Library.eCommerce.Services
     {
         private ProductServiceProxy _prodSvc = ProductServiceProxy.Current;
         private List<CartItem> items;
-        public double CheckoutPrice;
+        public double CheckoutPrice { get; set; }
 
-        public double taxRate { get; set; }
+        // Static tax rate that will be shared across all cart instances
+        private static double _globalTaxRate = 5;
+        
+        // Property for individual cart's tax rate that now uses the global value
+        public double taxRate 
+        { 
+            get { return _globalTaxRate; }
+            set { SetGlobalTaxRate(value); }
+        }
+        
+        // Method to update tax rate for all carts
+        public static void SetGlobalTaxRate(double newRate)
+        {
+            _globalTaxRate = newRate;
+        }
+        
         public List<CartItem> CartItems
         {
             get
@@ -32,7 +47,6 @@ namespace Library.eCommerce.Services
 
         private CartServiceProxy() {
             items = new List<CartItem>();
-            taxRate = 5;
         }
 
         public static CartServiceProxy? AddNewShoppingCart()

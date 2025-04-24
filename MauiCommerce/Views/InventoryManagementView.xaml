@@ -16,8 +16,7 @@
         </Grid>
         <Button Text="Filter (Name/Price)" Clicked="ChangeFilterClicked"/>
         <ListView
-            ItemsSource="{Binding Path=Inventory}"
-            SelectedItem="{Binding SelectedProduct}">
+            ItemsSource="{Binding Path=Inventory}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>

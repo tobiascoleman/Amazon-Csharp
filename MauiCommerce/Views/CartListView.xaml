@@ -1,37 +1,77 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:Library.eCommerce.Models;assembly=CommerceLibrary"
              x:Class="Maui.eCommerce.Views.CartListView"
-             Title="CartList">
-    <VerticalStackLayout>
-        <Label 
-            Text="Change Cart!"
-            VerticalOptions="Center" 
+             Title="Your Shopping Carts"
+             NavigatedTo="ContentPage_NavigatedTo">
+    
+    <Grid Padding="20" RowSpacing="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <Label Grid.Row="0"
+            Text="Your Shopping Carts"
+            FontSize="24"
+            FontAttributes="Bold"
             HorizontalOptions="Center" />
         
-        <ListView
-            ItemsSource="{Binding arrayOfShoppingCarts}"
-            SelectedItem="{Binding SelectedCart}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <Grid>
+        <CollectionView Grid.Row="1"
+                      x:Name="cartCollectionView"
+                      ItemsSource="{Binding arrayOfShoppingCarts}"
+                      SelectedItem="{Binding SelectedCart}"
+                      SelectionMode="Single">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:ShoppingCart">
+                    <Border Margin="5" Padding="10">
+                        <Grid Padding="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                    <HorizontalStackLayout>
-                        <Label Text="Cart #: " />
-                        <Label Text="{Binding Id}" />
-                    </HorizontalStackLayout>
-                        
+                            
+                            <StackLayout Grid.Column="0">
+                                <Label Text="{Binding Name}" FontSize="18" FontAttributes="Bold"/>
+                                <Label Text="{Binding Id, StringFormat='Cart ID: {0}'}" FontSize="12" TextColor="Gray"/>
+                            </StackLayout>
+                            
+                            <StackLayout Grid.Column="1" HorizontalOptions="End">
+                                <Label Text="{Binding ItemCount, StringFormat='Items: {0}'}" FontSize="14"/>
+                                <Label Text="{Binding TotalCost, StringFormat='Total: ${0:F2}'}" FontSize="14" FontAttributes="Bold"/>
+                            </StackLayout>
                         </Grid>
-
-                    </ViewCell>
+                    </Border>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        <Button Text="Add New Cart" Clicked="AddNewShoppingCart"/>
-        <Button Text="Switch To Selected Cart" Clicked="switchShoppingCart"/>
-        <Button Text="Go Back to Shopping Cart" Clicked="GoBackToShoppingCart"/>
-    </VerticalStackLayout>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
+        <StackLayout Grid.Row="2">
+            <Label Text="Create New Cart" FontSize="16" Margin="0,10,0,5"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Entry Grid.Column="0" Text="{Binding NewCartName}" Placeholder="Enter cart name"/>
+                <Button Grid.Column="1" Text="Add Cart" Clicked="AddNewShoppingCart"/>
+            </Grid>
+        </StackLayout>
+        
+        <Grid Grid.Row="3" ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Button Grid.Column="0" Text="Switch To Selected Cart" Clicked="switchShoppingCart"/>
+            <Button Grid.Column="1" Text="Return to Shopping" Clicked="GoBackToShoppingCart"/>
+        </Grid>
+    </Grid>
 </ContentPage>

@@ -28,7 +28,13 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     
-                    <Label Grid.Column="0" Text="Tax" />
+                    <Label Grid.Column="0">
+                        <Label.Text>
+                            <MultiBinding StringFormat="Tax ({0}%)">
+                                <Binding Path="TaxRate" />
+                            </MultiBinding>
+                        </Label.Text>
+                    </Label>
                     <Label Grid.Column="1" Text="{Binding TaxAmount, StringFormat='${0:F2}'}" />
                 </Grid>
                 

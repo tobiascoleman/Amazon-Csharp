@@ -14,6 +14,7 @@ namespace Maui.eCommerce.ViewModels
     public class CartsViewModel : INotifyPropertyChanged
     {
         public ShoppingCart? SelectedCart { get; set; }
+        public string NewCartName { get; set; } = "New Cart";
 
         public CartListService cartSvc { get; set; } = CartListService.Current;
 
@@ -40,8 +41,10 @@ namespace Maui.eCommerce.ViewModels
 
         public void AddNewCart()
         {
-            cartSvc.AddToShoppingCart();
+            cartSvc.AddToShoppingCart(NewCartName);
+            NewCartName = "New Cart"; // Reset to default
             NotifyPropertyChanged(nameof(arrayOfShoppingCarts));
+            NotifyPropertyChanged(nameof(NewCartName));
         }
 
         public void ChangeCurrentShoppingCart()
@@ -53,6 +56,23 @@ namespace Maui.eCommerce.ViewModels
                 NotifyPropertyChanged(nameof(SelectedCart));
                 NotifyPropertyChanged(nameof(cartSvc));
             }
+        }
+
+        // Helper methods to get cart item count and total cost
+        public int GetCartItemCount(ShoppingCart cart)
+        {
+            if (cart?.CartService == null)
+                return 0;
+
+            return cart.CartService.CartItems.Count(item => item.Quantity > 0);
+        }
+
+        public double GetCartTotalCost(ShoppingCart cart)
+        {
+            if (cart?.CartService == null)
+                return 0;
+
+            return cart.CartService.CheckoutPrice;
         }
     }
 }

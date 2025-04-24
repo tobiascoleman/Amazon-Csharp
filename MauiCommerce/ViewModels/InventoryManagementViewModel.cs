@@ -13,7 +13,6 @@ namespace Maui.eCommerce.ViewModels
 {
     public class InventoryManagementViewModel : INotifyPropertyChanged
     {
-        public CartItem? SelectedProduct { get; set; }
         public string? Query { get; set; }
         private ProductServiceProxy _svc = ProductServiceProxy.Current;
         private ObservableCollection<CartItem?> _inventory;
@@ -82,13 +81,6 @@ namespace Maui.eCommerce.ViewModels
         public ObservableCollection<CartItem?> Inventory
         {
             get => _inventory;
-        }
-
-        public CartItem? Delete()
-        {
-            var item = _svc.Delete(SelectedProduct?.Id ?? 0);
-            UpdateInventory();
-            return item;
         }
 
         public CartItem? DeleteItem(int itemId)

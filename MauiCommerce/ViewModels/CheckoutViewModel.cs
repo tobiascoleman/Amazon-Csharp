@@ -19,6 +19,15 @@ namespace Maui.eCommerce.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        public double TaxRate
+        {
+            get
+            {
+                __svc = _shopsvc.ReturnCurrentList() ?? throw new InvalidOperationException("ReturnCurrentList() returned null.");
+                return __svc.taxRate;
+            }
+        }
+
         public double SubTotal
         {
             get
@@ -96,6 +105,7 @@ namespace Maui.eCommerce.ViewModels
             NotifyPropertyChanged(nameof(TaxAmount));
             NotifyPropertyChanged(nameof(CheckoutCost));
             NotifyPropertyChanged(nameof(ShoppingCart));
+            NotifyPropertyChanged(nameof(TaxRate));
         }
         public void ClearOnCheckout()
         {

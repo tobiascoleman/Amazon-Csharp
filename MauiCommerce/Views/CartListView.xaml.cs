@@ -16,6 +16,11 @@ public partial class CartListView : ContentPage
         (BindingContext as CartsViewModel).AddNewCart();
     }
 
+	private void ContentPage_NavigatedTo(object sender, NavigatedToEventArgs e)
+	{
+		(BindingContext as CartsViewModel)?.NotifyPropertyChanged(nameof(CartsViewModel.arrayOfShoppingCarts));
+	}
+
 	public void GoBackToShoppingCart(object sender, EventArgs e)
     {
 		Shell.Current.GoToAsync("//ShoppingManagement");

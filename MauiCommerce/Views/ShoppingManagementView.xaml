@@ -69,12 +69,12 @@
                                         <ColumnDefinition/>
                                         <ColumnDefinition/>
                                         <ColumnDefinition/>
-                                        <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
-                                    <Label Grid.Column="0" Text="{Binding Model.Id}"/>
-                                    <Label Grid.Column="1" Text="{Binding Model.Product.Name}"/>
-                                    <Label Grid.Column="2" Text="x"/>
-                                    <Label Grid.Column="3" Text="{Binding Model.Quantity}"/>
+                                    <Button Grid.Column="0" Text="-" Command="{Binding RemoveCommand}" Clicked="InlineRemoveClicked"/>
+                                    <Label Grid.Column="1" Text="{Binding Model.Id}"/>
+                                    <Label Grid.Column="2" Text="{Binding Model.Product.Name}"/>
+                                    <Label Grid.Column="3" Text="x"/>
+                                    <Label Grid.Column="4" Text="{Binding Model.Quantity}"/>
                                 </Grid>
                             </ViewCell>
                         </DataTemplate>

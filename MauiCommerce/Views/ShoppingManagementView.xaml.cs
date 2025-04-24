@@ -28,6 +28,11 @@ public partial class ShoppingManagementView : ContentPage
     {
         (BindingContext as ShoppingManagementViewModel).RefreshUI();
     }
+    
+    private void InlineRemoveClicked(object sender, EventArgs e)
+    {
+        (BindingContext as ShoppingManagementViewModel).RefreshUI();
+    }
 
 	private async void OnCheckoutClicked(object sender, EventArgs e)
 	{
